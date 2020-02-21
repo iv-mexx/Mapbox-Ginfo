@@ -176,11 +176,11 @@
                     {
                         // ensure only one request for a URL at a time
                         //
-                        @synchronized ([(RMAbstractWebMapSource *)_tileSource URLsForTile:RMTileMake(x, y, zoom)])
+                        @synchronized ([(RMAbstractWebMapSource *)self->_tileSource URLsForTile:RMTileMake(x, y, zoom)])
                         {
                             // this will return quicker if cached since above attempt, else block on fetch
                             //
-                            if (_tileSource.isCacheable && [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]])
+                            if (self->_tileSource.isCacheable && [self->_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[self->_mapView tileCache]])
                             {
                                 dispatch_async(dispatch_get_main_queue(), ^(void)
                                 {

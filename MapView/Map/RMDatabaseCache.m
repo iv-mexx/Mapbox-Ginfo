@@ -276,19 +276,19 @@
         [_writeQueue addOperationWithBlock:^{
             __block BOOL result = NO;
 
-            [_writeQueueLock lock];
+            [self->_writeQueueLock lock];
 
-            [_queue inDatabase:^(FMDatabase *db)
+            [self->_queue inDatabase:^(FMDatabase *db)
              {
                  result = [db executeUpdate:@"INSERT OR IGNORE INTO ZCACHE (tile_hash, cache_key, last_used, data) VALUES (?, ?, ?, ?)", [RMTileCache tileHash:tile], aCacheKey, [NSDate date], data];
              }];
 
-            [_writeQueueLock unlock];
+            [self->_writeQueueLock unlock];
 
             if (result == NO)
                 RMLog(@"Error occured adding data");
             else
-                _tileCount++;
+                self->_tileCount++;
         }];
 	}
 }
@@ -350,9 +350,9 @@
     RMLog(@"removing all tiles from the db cache");
 
     [_writeQueue addOperationWithBlock:^{
-        [_writeQueueLock lock];
+        [self->_writeQueueLock lock];
 
-        [_queue inDatabase:^(FMDatabase *db)
+        [self->_queue inDatabase:^(FMDatabase *db)
          {
              BOOL result = [db executeUpdate:@"DELETE FROM ZCACHE"];
 
@@ -363,9 +363,9 @@
                  RMLog(@"Error purging cache");
          }];
 
-        [_writeQueueLock unlock];
+        [self->_writeQueueLock unlock];
 
-        _tileCount = [self countTiles];
+        self->_tileCount = [self countTiles];
     }];
 }
 
@@ -374,9 +374,9 @@
     RMLog(@"removing tiles for key '%@' from the db cache", cacheKey);
 
     [_writeQueue addOperationWithBlock:^{
-        [_writeQueueLock lock];
+        [self->_writeQueueLock lock];
 
-        [_queue inDatabase:^(FMDatabase *db)
+        [self->_queue inDatabase:^(FMDatabase *db)
          {
              BOOL result = [db executeUpdate:@"DELETE FROM ZCACHE WHERE cache_key = ?", cacheKey];
 
@@ -387,18 +387,18 @@
                  RMLog(@"Error purging cache");
          }];
 
-        [_writeQueueLock unlock];
+        [self->_writeQueueLock unlock];
 
-        _tileCount = [self countTiles];
+        self->_tileCount = [self countTiles];
     }];
 }
 
 - (void)touchTile:(RMTile)tile withKey:(NSString *)cacheKey
 {
     [_writeQueue addOperationWithBlock:^{
-        [_writeQueueLock lock];
+        [self->_writeQueueLock lock];
 
-        [_queue inDatabase:^(FMDatabase *db)
+        [self->_queue inDatabase:^(FMDatabase *db)
          {
              BOOL result = [db executeUpdate:@"UPDATE ZCACHE SET last_used = ? WHERE tile_hash = ? AND cache_key = ?", [NSDate date], [RMTileCache tileHash:tile], cacheKey];
 
@@ -406,7 +406,7 @@
                  RMLog(@"Error touching tile");
          }];
 
-        [_writeQueueLock unlock];
+        [self->_writeQueueLock unlock];
     }];
 }
 

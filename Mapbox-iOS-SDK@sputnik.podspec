@@ -1,7 +1,7 @@
 Pod::Spec.new do |m|
 
   m.name    = 'Mapbox-Ginfo'
-  m.version = '1.6.7'
+  m.version = '1.6.8'
 
   m.summary          = 'Fork of MapBox iOS SDK with some patches.'
   m.description      = 'An open source toolset for building mapping applications for iOS devices with great flexibility for visual styling, offline use, and customizability.'

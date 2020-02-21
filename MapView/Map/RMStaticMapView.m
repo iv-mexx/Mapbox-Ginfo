@@ -118,7 +118,7 @@
         {
             dispatch_sync(dispatch_get_main_queue(), ^(void)
             {
-                UIImage *image = [_weakSelf takeSnapshot];
+                UIImage *image = [self->_weakSelf takeSnapshot];
 
                 handler(image);
             });

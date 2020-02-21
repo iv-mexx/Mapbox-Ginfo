@@ -142,17 +142,17 @@
 - (void)addCache:(id <RMTileCache>)cache
 {
     dispatch_barrier_async(_tileCacheQueue, ^{
-        [_tileCaches addObject:cache];
+        [self->_tileCaches addObject:cache];
     });
 }
 
 - (void)insertCache:(id <RMTileCache>)cache atIndex:(NSUInteger)index
 {
     dispatch_barrier_async(_tileCacheQueue, ^{
-        if (index >= [_tileCaches count])
-            [_tileCaches addObject:cache];
+        if (index >= [self->_tileCaches count])
+            [self->_tileCaches addObject:cache];
         else
-            [_tileCaches insertObject:cache atIndex:index];
+            [self->_tileCaches insertObject:cache atIndex:index];
     });
 }
 
@@ -385,9 +385,9 @@
                     {
                         progTile++;
 
-                        if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBackgroundCacheTile:withIndex:ofTotalTileCount:)])
+                        if ([self->_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didBackgroundCacheTile:withIndex:ofTotalTileCount:)])
                         {
-                            [_backgroundCacheDelegate tileCache:weakSelf
+                            [self->_backgroundCacheDelegate tileCache:weakSelf
                                          didBackgroundCacheTile:RMTileMake((uint32_t)x, (uint32_t)y, zoom)
                                                       withIndex:progTile
                                                ofTotalTileCount:totalTiles];
@@ -399,18 +399,18 @@
                             {
                                 [weakSelf markCachingComplete];
 
-                                if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidFinishBackgroundCache:)])
+                                if ([self->_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidFinishBackgroundCache:)])
                                 {
-                                    [_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:weakSelf];
+                                    [self->_backgroundCacheDelegate tileCacheDidFinishBackgroundCache:weakSelf];
                                 }
                             });
                         }
                     }
                     else
                     {
-                        if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didReceiveError:whenCachingTile:)])
+                        if ([self->_backgroundCacheDelegate respondsToSelector:@selector(tileCache:didReceiveError:whenCachingTile:)])
                         {
-                            [_backgroundCacheDelegate tileCache:weakSelf
+                            [self->_backgroundCacheDelegate tileCache:weakSelf
                                                 didReceiveError:internalOperation.error
                                                 whenCachingTile:RMTileMake((uint32_t)x, (uint32_t)y, zoom)];
                         }
@@ -437,9 +437,9 @@
 
             if ([weakSelf markCachingComplete])
             {
-                if ([_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidCancelBackgroundCache:)])
+                if ([self->_backgroundCacheDelegate respondsToSelector:@selector(tileCacheDidCancelBackgroundCache:)])
                 {
-                    [_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:weakSelf];
+                    [self->_backgroundCacheDelegate tileCacheDidCancelBackgroundCache:weakSelf];
                 }
             }
         });

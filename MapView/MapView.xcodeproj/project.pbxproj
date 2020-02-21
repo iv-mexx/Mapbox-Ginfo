@@ -95,8 +95,6 @@
 		DD2B375514CF8197008DE8CB /* RMMBTilesSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD2B375314CF8197008DE8CB /* RMMBTilesSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD2B375614CF8197008DE8CB /* RMMBTilesSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD2B375414CF8197008DE8CB /* RMMBTilesSource.m */; };
 		DD36766B17D94F980001F27B /* mapbox-logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD36766A17D94F980001F27B /* mapbox-logo@2x.png */; };
-		DD3BEF7915913C55007892D8 /* RMAttributionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = DD3BEF7715913C55007892D8 /* RMAttributionViewController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD3BEF7A15913C55007892D8 /* RMAttributionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD3BEF7815913C55007892D8 /* RMAttributionViewController.m */; };
 		DD4195C9162356900049E6BA /* RMBingSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DD4195C7162356900049E6BA /* RMBingSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4195CA162356900049E6BA /* RMBingSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DD4195C8162356900049E6BA /* RMBingSource.m */; };
 		DD41960116250ED40049E6BA /* RMTileCacheDownloadOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = DD4195FF16250ED40049E6BA /* RMTileCacheDownloadOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -267,8 +265,6 @@
 		DD2B375314CF8197008DE8CB /* RMMBTilesSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMBTilesSource.h; sourceTree = "<group>"; };
 		DD2B375414CF8197008DE8CB /* RMMBTilesSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMBTilesSource.m; sourceTree = "<group>"; };
 		DD36766A17D94F980001F27B /* mapbox-logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "mapbox-logo@2x.png"; path = "Map/Resources/mapbox-logo@2x.png"; sourceTree = "<group>"; };
-		DD3BEF7715913C55007892D8 /* RMAttributionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMAttributionViewController.h; sourceTree = "<group>"; };
-		DD3BEF7815913C55007892D8 /* RMAttributionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMAttributionViewController.m; sourceTree = "<group>"; };
 		DD4195C7162356900049E6BA /* RMBingSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMBingSource.h; sourceTree = "<group>"; };
 		DD4195C8162356900049E6BA /* RMBingSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMBingSource.m; sourceTree = "<group>"; };
 		DD4195FF16250ED40049E6BA /* RMTileCacheDownloadOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMTileCacheDownloadOperation.h; sourceTree = "<group>"; };
@@ -547,7 +543,6 @@
 				B83E64CF0E80E73F001663B6 /* Tile Cache */,
 				B86F26A80E8742ED007A3773 /* Annotation Layers */,
 				DD8FD7571559ED930044D96F /* User Location */,
-				DD3BEF71159134E0007892D8 /* Attribution */,
 				1266929E0EB75BEA00E002D5 /* Configuration */,
 				DD932B5B165C261A00D69D49 /* Low-Level Details */,
 				DD932BC1165C287600D69D49 /* Resources */,
@@ -566,15 +561,6 @@
 				B83E64B70E80E73F001663B6 /* RMPixel.c */,
 			);
 			name = "Coordinate Systems";
-			sourceTree = "<group>";
-		};
-		DD3BEF71159134E0007892D8 /* Attribution */ = {
-			isa = PBXGroup;
-			children = (
-				DD3BEF7715913C55007892D8 /* RMAttributionViewController.h */,
-				DD3BEF7815913C55007892D8 /* RMAttributionViewController.m */,
-			);
-			name = Attribution;
 			sourceTree = "<group>";
 		};
 		DD8FD7571559ED930044D96F /* User Location */ = {
@@ -735,7 +721,6 @@
 				16128CF5148D295300C23C0E /* RMOpenSeaMapSource.h in Headers */,
 				DD8CDB4A14E0507100B73EB9 /* RMMapQuestOSMSource.h in Headers */,
 				16FFF2CB14E3DBF700A170EC /* RMMapQuestOpenAerialSource.h in Headers */,
-				DD3BEF7915913C55007892D8 /* RMAttributionViewController.h in Headers */,
 				16F3581B15864135003A3AD9 /* RMMapScrollView.h in Headers */,
 				16FBF07615936BF1004ECAD1 /* RMTileSourcesContainer.h in Headers */,
 				161E563A1594664E00B00BB6 /* RMOpenSeaMapLayer.h in Headers */,
@@ -925,7 +910,6 @@
 				1607499614E120A100D535F5 /* RMGenericMapSource.m in Sources */,
 				16FFF2CC14E3DBF700A170EC /* RMMapQuestOpenAerialSource.m in Sources */,
 				DDC4BEF2152E3FAE00089409 /* RMInteractiveSource.m in Sources */,
-				DD3BEF7A15913C55007892D8 /* RMAttributionViewController.m in Sources */,
 				DD8FD7551559E4A40044D96F /* RMUserLocation.m in Sources */,
 				DDA6B8BE155CAB67003DB5D8 /* RMUserTrackingBarButtonItem.m in Sources */,
 				16F3581C15864135003A3AD9 /* RMMapScrollView.m in Sources */,

@@ -51,8 +51,6 @@
 #import "RMUserLocation.h"
 #import "RMUserTrackingBarButtonItem.h"
 
-#import "RMAttributionViewController.h"
-
 #import "SMCalloutView.h"
 
 #pragma mark --- begin constants ----
@@ -77,7 +75,6 @@
                                        UIViewControllerTransitioningDelegate,
                                        UIViewControllerAnimatedTransitioning>
 
-@property (nonatomic, assign) UIViewController *viewControllerPresentingAttribution;
 @property (nonatomic, retain) RMUserLocation *userLocation;
 
 - (void)createMapView;
@@ -195,10 +192,6 @@
 
     RMUserTrackingBarButtonItem *_userTrackingBarButtonItem;
 
-    __weak UIViewController *_viewControllerPresentingAttribution;
-    UIButton *_attributionButton;
-    UIPopoverController *_attributionPopover;
-
     CGAffineTransform _mapTransform;
     CATransform3D _annotationTransform;
 
@@ -234,7 +227,6 @@
 @synthesize displayHeadingCalibration = _displayHeadingCalibration;
 @synthesize missingTilesDepth = _missingTilesDepth;
 @synthesize debugTiles = _debugTiles;
-@synthesize hideAttribution = _hideAttribution;
 @synthesize showLogoBug = _showLogoBug;
 
 #pragma mark -
@@ -595,38 +587,6 @@
         }
     }
 
-    if (_attributionButton)
-    {
-        if ( ! [[viewController.view valueForKeyPath:@"constraints.firstItem"]  containsObject:_attributionButton] &&
-             ! [[viewController.view valueForKeyPath:@"constraints.secondItem"] containsObject:_attributionButton])
-        {
-            NSString *formatString;
-            NSDictionary *views;
-
-            if (RMPostVersion7)
-            {
-                formatString = @"V:[attributionButton]-bottomSpacing-[bottomLayoutGuide]";
-                views = @{ @"attributionButton" : _attributionButton,
-                           @"bottomLayoutGuide" : viewController.bottomLayoutGuide };
-            }
-            else
-            {
-                formatString = @"V:[attributionButton]-bottomSpacing-|";
-                views = @{ @"attributionButton" : _attributionButton };
-            }
-
-            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:formatString
-                                                                                        options:0
-                                                                                        metrics:@{ @"bottomSpacing" : @(8) }
-                                                                                          views:views]];
-
-            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[attributionButton]-rightSpacing-|"
-                                                                                        options:0
-                                                                                        metrics:@{ @"rightSpacing" : @(8) }
-                                                                                          views:views]];
-        }
-    }
-
     [super updateConstraints];
 }
 
@@ -647,23 +607,7 @@
                                   backgroundImage:nil];
     }
 
-    if ( ! self.viewControllerPresentingAttribution && ! _hideAttribution)
-    {
-        self.viewControllerPresentingAttribution = [self viewController];
-    }
-    else if (self.viewControllerPresentingAttribution && _hideAttribution)
-    {
-        self.viewControllerPresentingAttribution = nil;
-    }
-
     [super layoutSubviews];
-}
-
-- (void)removeFromSuperview
-{
-    self.viewControllerPresentingAttribution = nil;
-
-    [super removeFromSuperview];
 }
 
 - (NSString *)description
@@ -3861,203 +3805,6 @@
 - (void)setUserTrackingBarButtonItem:(RMUserTrackingBarButtonItem *)userTrackingBarButtonItem
 {
     _userTrackingBarButtonItem = userTrackingBarButtonItem;
-}
-
-#pragma mark -
-#pragma mark Attribution
-
-- (void)setHideAttribution:(BOOL)flag
-{
-    if (_hideAttribution == flag)
-        return;
-
-    _hideAttribution = flag;
-
-    [self layoutSubviews];
-}
-
-- (UIViewController *)viewControllerPresentingAttribution
-{
-    return _viewControllerPresentingAttribution;
-}
-
-- (void)setViewControllerPresentingAttribution:(UIViewController *)viewController
-{
-    _viewControllerPresentingAttribution = viewController;
-    
-    if (_viewControllerPresentingAttribution && ! _attributionButton)
-    {
-        _attributionButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
-        _attributionButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
-        _attributionButton.translatesAutoresizingMaskIntoConstraints = NO;
-        [_attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
-        _attributionButton.frame = CGRectMake(self.bounds.size.width - _attributionButton.bounds.size.width - 8,
-                                              self.bounds.size.height - _attributionButton.bounds.size.height - 8,
-                                              _attributionButton.bounds.size.width,
-                                              _attributionButton.bounds.size.height);
-        [self addSubview:_attributionButton];
-        [self updateConstraints];
-    }
-    else if ( ! _viewControllerPresentingAttribution && _attributionButton)
-    {
-        [_attributionButton removeFromSuperview];
-        _attributionButton = nil;
-    }
-}
-
-- (void)showAttribution:(id)sender
-{
-    if (_viewControllerPresentingAttribution)
-    {
-        RMAttributionViewController *attributionViewController = [[RMAttributionViewController alloc] initWithMapView:self];
-
-        if (RMPostVersion7)
-        {
-            attributionViewController.view.tintColor = self.tintColor;
-            attributionViewController.edgesForExtendedLayout = UIRectEdgeNone;
-
-            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
-            {
-                // show popover
-                //
-                _attributionPopover = [[UIPopoverController alloc] initWithContentViewController:attributionViewController];
-                _attributionPopover.backgroundColor = [UIColor whiteColor];
-                _attributionPopover.popoverContentSize = CGSizeMake(320, 320);
-                _attributionPopover.delegate = self;
-                [_attributionPopover presentPopoverFromRect:_attributionButton.frame
-                                                     inView:self
-                                   permittedArrowDirections:UIPopoverArrowDirectionDown
-                                                   animated:NO];
-            }
-            else
-            {
-                // slide up see-through modal
-                //
-                attributionViewController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                                                                            target:self
-                                                                                                                            action:@selector(dismissAttribution:)];
-
-                UINavigationController *wrapper = [[UINavigationController alloc] initWithRootViewController:attributionViewController];
-                wrapper.navigationBar.tintColor = self.tintColor;
-                wrapper.modalPresentationStyle = UIModalPresentationCustom;
-                wrapper.transitioningDelegate = self;
-                [_viewControllerPresentingAttribution presentViewController:wrapper animated:YES completion:nil];
-            }
-        }
-        else
-        {
-            // page curl reveal behind map
-            //
-            attributionViewController.modalTransitionStyle = UIModalTransitionStylePartialCurl;
-            [_viewControllerPresentingAttribution presentViewController:attributionViewController animated:YES completion:nil];
-        }
-    }
-}
-
-- (void)dismissAttribution:(id)sender
-{
-    [_viewControllerPresentingAttribution dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)popoverController:(UIPopoverController *)popoverController willRepositionPopoverToRect:(inout CGRect *)rect inView:(inout UIView **)view
-{
-    *rect = _attributionButton.frame;
-}
-
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
-{
-    _attributionPopover = nil;
-}
-
-- (id<UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented presentingController:(UIViewController *)presenting sourceController:(UIViewController *)source
-{
-    return self;
-}
-
-- (id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed
-{
-    return self;
-}
-
-- (NSTimeInterval)transitionDuration:(id <UIViewControllerContextTransitioning>)transitionContext
-{
-    return (1.0 / 3.0);
-}
-
-- (void)animateTransition:(id <UIViewControllerContextTransitioning>)transitionContext
-{
-    UIView *inView   = [transitionContext containerView];
-    UIView *fromView = [[transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey] view];
-    UIView *toView   = [[transitionContext viewControllerForKey:UITransitionContextToViewControllerKey] view];
-
-    CGPoint onScreenCenter = fromView.center;
-
-    CGPoint offScreenCenter;
-
-    if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]))
-    {
-        CGFloat factor = ([[UIApplication sharedApplication] statusBarOrientation] == UIInterfaceOrientationLandscapeLeft ? 1.0 : -1.0);
-
-        offScreenCenter = CGPointMake(fromView.bounds.size.height * factor, fromView.bounds.size.width / 2);
-    }
-    else
-    {
-        offScreenCenter = CGPointMake(fromView.center.x, fromView.center.y + toView.bounds.size.height);
-    }
-
-    BOOL isPresentation;
-
-    if ([[transitionContext viewControllerForKey:UITransitionContextToViewControllerKey] isKindOfClass:[UINavigationController class]] &&
-        [[(UINavigationController *)[transitionContext viewControllerForKey:UITransitionContextToViewControllerKey] topViewController] isKindOfClass:[RMAttributionViewController class]])
-    {
-        isPresentation = YES;
-
-        [inView addSubview:toView];
-
-        toView.bounds = fromView.bounds;
-
-        toView.center = offScreenCenter;
-    }
-    else
-    {
-        isPresentation = NO;
-
-        fromView.center = onScreenCenter;
-    }
-
-    [UIView animateWithDuration:[self transitionDuration:transitionContext]
-                          delay:0
-                        options:UIViewAnimationOptionCurveEaseInOut
-                     animations:^(void)
-                     {
-                         fromView.userInteractionEnabled = NO;
-
-                         if (isPresentation)
-                         {
-                             toView.center = onScreenCenter;
-                         }
-                         else
-                         {
-                             fromView.center = offScreenCenter;
-
-                             toView.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
-                         }
-                     }
-                     completion:^(BOOL finished)
-                     {
-                         if (isPresentation)
-                         {
-                             fromView.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
-                         }
-                         else
-                         {
-                             toView.userInteractionEnabled = YES;
-
-                             [fromView removeFromSuperview];
-                         }
-
-                         [transitionContext completeTransition:YES];
-                     }];
 }
 
 @end

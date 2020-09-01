@@ -606,7 +606,7 @@
                                      minZoomLevel:kDefaultMinimumZoomLevel
                                   backgroundImage:nil];
     } else {
-      [self setMinZoom:_tileSourcesContainer.minZoom];
+      [self setMinZoom:[self tileSourcesMinZoom]];
     }
 
     [super layoutSubviews];
@@ -1290,6 +1290,7 @@
     _mapScrollView.contentOffset = CGPointMake(0.0, 0.0);
     _mapScrollView.clipsToBounds = NO;
     _mapScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _mapScrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAlways;
 
     _tiledLayersSuperview = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height)];
     _tiledLayersSuperview.userInteractionEnabled = NO;
@@ -2425,7 +2426,10 @@
 
 - (void)setMinZoom:(float)newMinZoom
 {
-    float boundingDimension = fmaxf(self.bounds.size.width, self.bounds.size.height);
+    float width = self.bounds.size.width - _mapScrollView.adjustedContentInset.left - _mapScrollView.adjustedContentInset.right;
+    float height = self.bounds.size.height - _mapScrollView.adjustedContentInset.top - _mapScrollView.adjustedContentInset.bottom;
+  
+    float boundingDimension = fmaxf(width, height);
     float tileSideLength    = _tileSourcesContainer.tileSideLength;
     float clampedMinZoom    = log2(boundingDimension / tileSideLength);
 
@@ -2440,6 +2444,10 @@
 //    RMLog(@"New minZoom:%f", newMinZoom);
 
     _mapScrollView.minimumZoomScale = exp2f(newMinZoom);
+}
+
+- (void)scrollViewDidChangeAdjustedContentInset:(UIScrollView *)scrollView {
+  [self setMinZoom:[self tileSourcesMinZoom]];
 }
 
 - (float)tileSourcesMinZoom

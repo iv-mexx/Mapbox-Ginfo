@@ -605,6 +605,8 @@
                                      maxZoomLevel:kDefaultMaximumZoomLevel
                                      minZoomLevel:kDefaultMinimumZoomLevel
                                   backgroundImage:nil];
+    } else {
+      [self setMinZoom:_tileSourcesContainer.minZoom];
     }
 
     [super layoutSubviews];

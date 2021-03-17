@@ -1,7 +1,7 @@
 Pod::Spec.new do |m|
 
   m.name    = 'Mapbox-Ginfo'
-  m.version = '1.6.11'
+  m.version = '1.6.12'
 
   m.summary          = 'Fork of MapBox iOS SDK with some patches.'
   m.description      = 'An open source toolset for building mapping applications for iOS devices with great flexibility for visual styling, offline use, and customizability.'
@@ -62,7 +62,8 @@ Pod::Spec.new do |m|
       'MapView/Map/RMTileSource.h',
       'MapView/Map/RMTileSourcesContainer.h',
       'MapView/Map/RMUserLocation.h',
-      'MapView/Map/RMUserTrackingBarButtonItem.h'
+      'MapView/Map/RMUserTrackingBarButtonItem.h',
+      'MapView/Map/RMQuadTree.h'
     ]
 
   m.resource_bundle = {

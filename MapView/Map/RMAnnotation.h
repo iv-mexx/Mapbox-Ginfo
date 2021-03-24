@@ -82,6 +82,9 @@
 /** The annotation's current location on screen relative to the map. Do not set this directly unless during temporary operations such as animations, but rather use the coordinate property to permanently change the annotation's location on the map. */
 @property (nonatomic, assign) CGPoint position;
 
+/** The annotation's intended zPosition */
+@property (nonatomic) NSInteger zPosition;
+
 /** The annotation's absolute location on screen taking into account possible map rotation. */
 @property (nonatomic, readonly, assign) CGPoint absolutePosition;
 

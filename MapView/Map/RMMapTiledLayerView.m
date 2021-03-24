@@ -250,10 +250,10 @@
                 float xCrop = (floor(rect.origin.x / rect.size.width) / 2.0) - x;
                 float yCrop = (floor(rect.origin.y / rect.size.height) / 2.0) - y;
 
-                CGRect cropBounds = CGRectMake(tileImage.size.width * xCrop,
-                                               tileImage.size.height * yCrop,
-                                               tileImage.size.width * 0.5,
-                                               tileImage.size.height * 0.5);
+                CGRect cropBounds = CGRectMake(tileImage.size.width * tileImage.scale * xCrop,
+                                               tileImage.size.height * tileImage.scale * yCrop,
+                                               tileImage.size.width * tileImage.scale * 0.5,
+                                               tileImage.size.height * tileImage.scale * 0.5);
 
                 CGImageRef imageRef = CGImageCreateWithImageInRect([tileImage CGImage], cropBounds);
                 tileImage = [UIImage imageWithCGImage:imageRef];

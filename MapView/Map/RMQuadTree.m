@@ -476,7 +476,7 @@
             }
             
             for(id clusterIdentifier in enclosedAnnotationsDict.allKeys) {
-                NSArray *enclosedAnnotations = enclosedAnnotationsDict[clusterIdentifier];
+                NSArray<RMAnnotation *> *enclosedAnnotations = enclosedAnnotationsDict[clusterIdentifier];
                 
                 
                 @synchronized (_cachedClusterAnnotations)
@@ -549,7 +549,9 @@
                     clusterAnnotation.isClusterAnnotation = YES;
                     clusterAnnotation.clusteringIdentifier = clusterIdentifier;
                     clusterAnnotation.userInfo = self;
-                    
+                    // Assume all clustered annotations have the same zPosition
+                    clusterAnnotation.zPosition = enclosedAnnotations.firstObject.zPosition;
+
                     [_cachedClusteredEnclosedAnnotations setObject:[[NSArray alloc] initWithArray:enclosedAnnotations] forKey:clusterIdentifier];
                     [_cachedClusterAnnotations setObject:clusterAnnotation forKey:clusterIdentifier];
                 }

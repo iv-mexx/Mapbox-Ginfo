@@ -58,10 +58,19 @@
 
 - (void)dealloc
 {
+  // Normally, the Dealloc is called on the RMTileCache's internal queue when the RMTileCache is deallocated
+  // However, if there is any async operation in RMMemoryCache still ongoing that retains `self`, the dealloc is delayed until that async operation finishes
+  // and then, this dealloc will be called on _memoryCacheQueue
+  // If, in that case, dispatch_barrier_sync is used, this leads to a deadlock, so we have to check whether the dealloc is called on _memoryCacheQueue or not
+  if(dispatch_get_current_queue() == _memoryCacheQueue)  {
+      [_memoryCache removeAllObjects];
+      _memoryCache = nil;
+  } else {
     dispatch_barrier_sync(_memoryCacheQueue, ^{
         [_memoryCache removeAllObjects];
         _memoryCache = nil;
     });
+  }
     
 #if ! OS_OBJECT_USE_OBJC
     dispatch_release(_memoryCacheQueue);
